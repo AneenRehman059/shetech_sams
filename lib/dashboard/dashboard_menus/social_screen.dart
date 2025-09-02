@@ -30,9 +30,8 @@ class SocialScreen extends StatelessWidget {
 
           Column(
             children: [
-              /// Top bar
               Padding(
-                padding: const EdgeInsets.only(top: 30, left: 10),
+                padding: const EdgeInsets.only(top: 20, left: 10),
                 child: Row(
                   children: [
                     IconButton(
@@ -62,7 +61,7 @@ class SocialScreen extends StatelessWidget {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          SpinKitFadingCircle(
+                          SpinKitWave(
                             color: AppColors.appColor,
                             size: 50.0,
                           ),

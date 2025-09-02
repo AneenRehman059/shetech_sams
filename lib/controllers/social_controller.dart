@@ -21,7 +21,6 @@ class SocialController extends GetxController {
     });
   }
 
-
   Future<void> fetchBranches({bool showLoader = false}) async {
     try {
       if (showLoader) isLoading.value = true;
@@ -35,10 +34,18 @@ class SocialController extends GetxController {
         final decoded = jsonDecode(response.body);
         if (decoded["StatusCode"] == "200") {
           final List branchList = decoded["obj"]["Branchlist"];
+
+          // Skip the first item (code "000000" which is "All")
           final updatedBranches = branchList.skip(1).map<Map<String, dynamic>>((b) {
             return {
               'brn_code': b['brn_code'],
               'brn_name': b['brn_name'],
+              'add_1': b['add_1'],
+              'add_2': b['add_2'],
+              'add_3': b['add_3'],
+              'add_4': b['add_4'],
+              'email_address': b['email_address'],
+              'phone_no': b['phone_no'],
               'image_url': "${ApiConstants.baseUrl}${(b['image_url'] ?? '').toString().replaceAll("\\", "/")}"
             };
           }).toList();
@@ -55,7 +62,6 @@ class SocialController extends GetxController {
       if (showLoader) isLoading.value = false;
     }
   }
-
 
   @override
   void onClose() {

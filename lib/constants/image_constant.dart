@@ -27,5 +27,6 @@ class ImageConstant {
   static var ab2 = 'assets/images/ab2.png';
   static var ab3 = 'assets/images/ab3.png';
   static var logo1 = 'assets/images/logo1.png';
+  static var mission = 'assets/images/mission.png';
 
 }

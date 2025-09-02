@@ -143,7 +143,7 @@ class BookingController extends GetxController {
         Get.snackbar(
           "Booking Submitted",
           "Your booking request has been submitted successfully.",
-          backgroundColor: Colors.black12,
+          backgroundColor: Colors.black45,
           colorText: Colors.white,
           margin: EdgeInsets.all(10),
           borderRadius: 8,

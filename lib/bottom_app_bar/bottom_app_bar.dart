@@ -4,17 +4,21 @@ import 'package:washmen/dashboard/about_us_screen.dart';
 import 'package:washmen/dashboard/profile_screen.dart';
 import 'package:washmen/dashboard/sales_center_screen.dart';
 import '../constants/image_constant.dart';
+import '../customs/login_check_util.dart';
 import '../dashboard/main_screen.dart';
+import '../login_screen.dart';
 
 class BottomNavItem {
   final String label;
   final String iconPath;
   final Widget screen;
+  final bool requiresLogin;
 
   const BottomNavItem({
     required this.label,
     required this.iconPath,
     required this.screen,
+    this.requiresLogin = false,
   });
 }
 
@@ -100,7 +104,26 @@ class _MainWrapperState extends State<MainWrapper> {
     );
   }
 
-  void _handleNavTap(int index) {
+  void _handleNavTap(int index) async {
+    final navItem = _navItems[index];
+
+    if (navItem.requiresLogin) {
+      final isLoggedIn = await LoginCheckUtil.isUserLoggedIn();
+
+      if (!isLoggedIn) {
+        LoginCheckUtil.showLoginRequiredDialog(
+          context,
+          onYesPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => LoginScreen()),
+            );
+          },
+        );
+        return;
+      }
+    }
+
     if (widget.child != null) {
       // If coming from a child route, reset the navigation stack
       Navigator.of(context).pushAndRemoveUntil(
@@ -118,25 +141,29 @@ class _MainWrapperState extends State<MainWrapper> {
   }
 
   static final List<BottomNavItem> _navItems = [
-     BottomNavItem(
+    BottomNavItem(
       label: 'Home',
       iconPath: ImageConstant.home,
       screen: MainScreen(),
+      requiresLogin: false,
     ),
-     BottomNavItem(
+    BottomNavItem(
       label: 'Profile',
       iconPath: ImageConstant.profile,
       screen: ProfileScreen(title: 'Profile'),
+      requiresLogin: true,
     ),
-     BottomNavItem(
+    BottomNavItem(
       label: 'Sales Centers',
       iconPath: ImageConstant.sales,
       screen: SalesCenterScreen(title: 'Sales Centers'),
+      requiresLogin: false,
     ),
     BottomNavItem(
       label: 'About us',
       iconPath: ImageConstant.about,
       screen: const AboutUsScreen(title: 'About us'),
+      requiresLogin: false,
     ),
   ];
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:video_player/video_player.dart';
 import 'package:washmen/dashboard/sales_center_screen.dart';
 import 'package:washmen/help_support_screen.dart';
 import 'package:washmen/login_screen.dart';
@@ -18,11 +19,27 @@ class WelcomeScreen extends StatefulWidget {
 
 class _WelcomeScreenState extends State<WelcomeScreen> {
   String appVersion = '1.0.0'; // Default version
+  late VideoPlayerController _controller;
+  bool _isVideoInitialized = false;
 
   @override
   void initState() {
     super.initState();
     _getAppVersion();
+    _initializeVideo();
+  }
+
+  Future<void> _initializeVideo() async {
+    _controller = VideoPlayerController.network(
+      'https://bsmdemo.shesoft.com.pk/Upload/splash_video/splash_video.mp4',
+    )..initialize().then((_) {
+      setState(() {
+        _isVideoInitialized = true;
+      });
+      _controller.setLooping(true);
+      _controller.play();
+      _controller.setVolume(0);
+    });
   }
 
   Future<void> _getAppVersion() async {
@@ -33,19 +50,30 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   }
 
   @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.black,
         body: Stack(
           children: [
-            // Background Image
-            Positioned.fill(
-              child: Image.asset(
-                ImageConstant.welcome,
-                fit: BoxFit.cover,
+            // Video background
+            if (_isVideoInitialized)
+              Positioned.fill(
+                child: AspectRatio(
+                  aspectRatio: _controller.value.aspectRatio,
+                  child: VideoPlayer(_controller),
+                ),
+              )
+            else
+              Container(
+                color: Colors.black,
               ),
-            ),
 
             // Dark overlay for better text visibility
             Positioned.fill(
@@ -53,6 +81,15 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 color: Colors.black.withOpacity(0.4),
               ),
             ),
+
+            if (!_isVideoInitialized)
+              const Center(
+                child: Icon(
+                  Icons.play_circle_fill,
+                  color: Colors.white,
+                  size: 60.0,
+                ),
+              ),
 
             // Content
             Column(

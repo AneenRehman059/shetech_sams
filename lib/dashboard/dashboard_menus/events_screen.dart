@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:washmen/customs/app_bar.dart';
@@ -16,61 +17,63 @@ class GetEventsScreen extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
-    return Scaffold(
-      backgroundColor: AppColors.appColor,
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(100),
-        child: CustomAppBar(
-          title: 'Events',
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+        value: SystemUiOverlayStyle(
+          statusBarColor: Colors.black38,
+          statusBarIconBrightness: Brightness.dark,
+          systemNavigationBarColor: Colors.white,
+          systemNavigationBarIconBrightness: Brightness.dark,
         ),
-      ),
-      body: Obx(() {
-        if (eventsController.isLoading.value) {
-          return Center(
-            child: SpinKitFadingCircle(
-              color: AppColors.whiteBg,
-              size: screenWidth * 0.12,
-            ),
-          );
-        } else if (eventsController.uniqueEvents.isEmpty) {
-          return Center(
-            child: Text(
-              'No events available',
-              style: TextStyle(fontSize: screenWidth * 0.04),
-            ),
-          );
-        } else {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              // Padding(
-              //   padding: EdgeInsets.fromLTRB(
-              //       screenWidth * 0.04,
-              //       screenHeight * 0.02,
-              //       screenWidth * 0.04,
-              //       screenHeight * 0.02),
-              //   child: Text(
-              //     'Events',
-              //     style: TextStyle(
-              //       fontSize: screenWidth * 0.06, // responsive heading
-              //       fontWeight: FontWeight.bold,
-              //       color: AppColors.whiteBg,
-              //     ),
-              //   ),
-              // ),
-              SizedBox(height: 20,),
-              Expanded(
-                child: EventsGrid(
-                  events: eventsController.uniqueEvents,
-                  screenWidth: screenWidth,
-                  screenHeight: screenHeight,
-                  eventsController: eventsController,
-                ),
+      child: Scaffold(
+      backgroundColor: AppColors.appColor,
+      body: SafeArea(
+        child: Obx(() {
+          if (eventsController.isLoading.value) {
+            return Center(
+              child: SpinKitWave(
+                color: AppColors.whiteBg,
+                size: screenWidth * 0.12,
               ),
-            ],
-          );
-        }
-      }),
+            );
+          } else if (eventsController.uniqueEvents.isEmpty) {
+            return Column(
+              children: [
+                CustomAppBar(title: 'Events'),
+                Expanded(
+                  child: Center(
+                    child: Text(
+                      'No events available',
+                      style: TextStyle(fontSize: screenWidth * 0.04, color: AppColors.whiteBg),
+                    ),
+                  ),
+                ),
+              ],
+            );
+          } else {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                CustomAppBar(title: 'Events'),
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Container(
+                      color: AppColors.appColor,
+                      child: EventsGrid(
+                        events: eventsController.uniqueEvents,
+                        screenWidth: screenWidth,
+                        screenHeight: screenHeight,
+                        eventsController: eventsController,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            );
+          }
+        }),
+      ),
+    )
     );
   }
 }
@@ -163,7 +166,7 @@ class EventItem extends StatelessWidget {
                 loadingBuilder: (context, child, loadingProgress) {
                   if (loadingProgress == null) return child;
                   return Center(
-                    child: SpinKitFadingCircle(
+                    child: SpinKitWave(
                       color: AppColors.appColor,
                       size: screenWidth * 0.08,
                     ),

@@ -15,4 +15,5 @@ class ApiConstants {
   static const String getPlotNatureUrl = "$baseUrl/api/MobileApi/GetPlotNature";
   static const String getPlotTypeUrl = "$baseUrl/api/MobileApi/GetPlotType";
   static const String getEventsUrl = "$baseUrl/api/ReportExecl/GetCompanyInfo";
+  static const String updatePasswordUrl = "$baseUrl/api/ReportExecl/ChangePassword";
 }

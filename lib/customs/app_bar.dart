@@ -5,18 +5,16 @@ import 'package:washmen/colors.dart';
 import '../constants/image_constant.dart';
 import '../controllers/login_controller.dart';
 
-class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
+class CustomAppBar extends StatelessWidget {
   final double height;
   final bool showBackButton;
-  final bool showLogoutButton;
   final String? title;
   final VoidCallback? onBackPressed;
 
   const CustomAppBar({
     super.key,
-    this.height = 90,
+    this.height = 65,
     this.showBackButton = true,
-    this.showLogoutButton = false,
     this.title,
     this.onBackPressed,
   });
@@ -25,17 +23,31 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     final loginController = Get.find<LoginController>();
 
+    // Get screen size for responsiveness
+    final mediaQuery = MediaQuery.of(context);
+    final screenHeight = mediaQuery.size.height;
+    final screenWidth = mediaQuery.size.width;
+
+    // Scale values
+    final appBarHeight = height * (screenHeight / 812);
+    final fontSize = screenWidth * 0.045;
+    final logoHeight = screenHeight * 0.07;
+
     return Container(
       color: AppColors.whiteBg,
-      padding: const EdgeInsets.only(top: 25),
+      height: appBarHeight,
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               if (showBackButton)
                 IconButton(
-                  icon: const Icon(Icons.arrow_back_ios),
+                  icon: Icon(
+                    Icons.arrow_back_ios,
+                    size: screenWidth * 0.06,
+                  ),
                   onPressed: onBackPressed ??
                           () {
                         Navigator.pushReplacement(
@@ -45,16 +57,15 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                       },
                 )
               else
-                const SizedBox(width: 48),
+                SizedBox(width: screenWidth * 0.12),
 
-              // If title is provided, show text. Otherwise, show logo
               Expanded(
                 child: Center(
                   child: title != null
                       ? Text(
                     title!,
-                    style: const TextStyle(
-                      fontSize: 18,
+                    style: TextStyle(
+                      fontSize: fontSize,
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
                     ),
@@ -62,29 +73,16 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                   )
                       : Image.asset(
                     ImageConstant.logo,
-                    height: height * 0.6,
+                    height: logoHeight,
                   ),
                 ),
               ),
-
-              if (showLogoutButton)
-                IconButton(
-                  icon: Image.asset(
-                    ImageConstant.logout,
-                    height: 24,
-                    width: 24,
-                  ),
-                  onPressed: () {
-                    // logout logic
-                  },
-                )
-              else
-                const SizedBox(width: 48),
+              SizedBox(width: screenWidth * 0.12),
             ],
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: 8),
           Divider(
-            height: 1,
+            height: 0,
             thickness: 1,
             color: AppColors.appColor,
           ),
@@ -92,7 +90,4 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
     );
   }
-
-  @override
-  Size get preferredSize => Size.fromHeight(height);
 }

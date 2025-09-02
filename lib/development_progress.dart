@@ -32,7 +32,7 @@ class GetDevelopmentProgressScreen extends StatelessWidget {
               child: Obx(() {
                 if (eventsController.isLoading.value) {
                   return const Center(
-                    child: SpinKitFadingCircle(
+                    child: SpinKitWave(
                       color: Colors.white,
                       size: 50.0,
                     ),

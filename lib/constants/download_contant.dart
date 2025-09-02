@@ -1,42 +1,26 @@
 import 'dart:io';
-import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 class DownloadUtils {
   static Future<bool> downloadFile(String url, String fileName) async {
     try {
-      // Request storage permission
-      final status = await Permission.storage.request();
-      if (!status.isGranted) {
-        return false;
+      final response = await HttpClient().getUrl(Uri.parse(url));
+      final result = await response.close();
+
+      // 👇 This gets the actual Downloads folder
+      final directory = Directory('/storage/emulated/0/Download');
+
+      if (!await directory.exists()) {
+        await directory.create(recursive: true);
       }
 
-      // Get the download directory
-      final directory = await getExternalStorageDirectory();
-      if (directory == null) {
-        return false;
-      }
-
-      // Create downloads folder if it doesn't exist
-      final downloadDir = Directory('${directory.path}/Download');
-      if (!await downloadDir.exists()) {
-        await downloadDir.create(recursive: true);
-      }
-
-      // Download the file
-      final response = await http.get(Uri.parse(url));
-      if (response.statusCode != 200) {
-        return false;
-      }
-
-      // Save the file
-      final file = File('${downloadDir.path}/$fileName.pdf');
-      await file.writeAsBytes(response.bodyBytes);
+      final file = File('${directory.path}/$fileName.pdf');
+      final bytes = await result.fold<List<int>>([], (a, b) => a..addAll(b));
+      await file.writeAsBytes(bytes);
 
       return true;
     } catch (e) {
-      print('Download error: $e');
+      print("Download error: $e");
       return false;
     }
   }

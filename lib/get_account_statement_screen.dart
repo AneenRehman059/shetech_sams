@@ -40,7 +40,7 @@ class AccountStatementScreen extends StatelessWidget {
       body: Obx(() {
         if (controller.isLoading.value) {
           return Center(
-            child: SpinKitCircle(
+            child: SpinKitWave(
               color: AppColors.appColor,
               size: 50.0,
             ),
@@ -60,16 +60,13 @@ class AccountStatementScreen extends StatelessWidget {
     );
   }
 
-  // ... rest of your code remains the same
   Widget _buildStatementTable(List<Statement> statements) {
     final scrollController = ScrollController();
 
-    // Part 1: Group 1 statements
     final group1Statements = statements
         .where((s) => s.grp == '1')
         .toList();
 
-    // Part 2: Group 3 statements
     final group3Statements = statements
         .where((s) => s.grp == '3')
         .toList();
@@ -99,14 +96,14 @@ class AccountStatementScreen extends StatelessWidget {
     Widget buildHeader() {
       return Table(
         border: TableBorder.all(),
-        columnWidths: const {
-          0: FixedColumnWidth(120),
+        columnWidths: {
+          0: FixedColumnWidth(165),
           1: FixedColumnWidth(70),
           2: FixedColumnWidth(100),
-          3: FixedColumnWidth(100),
-          4: FixedColumnWidth(100),
-          5: FixedColumnWidth(100),
-          6: FixedColumnWidth(100),
+          3: FixedColumnWidth(95),
+          4: FixedColumnWidth(95),
+          5: FixedColumnWidth(95),
+          6: FixedColumnWidth(95),
         },
         children: [
           TableRow(
@@ -117,8 +114,9 @@ class AccountStatementScreen extends StatelessWidget {
               Center(child: Padding(padding: EdgeInsets.all(10), child: Text('Inst Date', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)))),
               Align(alignment: Alignment.centerRight, child: Padding(padding: EdgeInsets.all(10), child: Text('Due Amt', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)))),
               Align(alignment: Alignment.centerRight, child: Padding(padding: EdgeInsets.all(10), child: Text('Paid Amt', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)))),
-              Align(alignment: Alignment.centerRight, child: Padding(padding: EdgeInsets.all(10), child: Text('OS Amt', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)))),
+              // Rebat Amt column moved before OS Amt
               Align(alignment: Alignment.centerRight, child: Padding(padding: EdgeInsets.all(10), child: Text('Rebat Amt', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)))),
+              Align(alignment: Alignment.centerRight, child: Padding(padding: EdgeInsets.all(10), child: Text('OS Amt', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)))),
             ],
           ),
         ],
@@ -129,14 +127,14 @@ class AccountStatementScreen extends StatelessWidget {
     Widget buildData() {
       final group1Table = Table(
         border: TableBorder.all(),
-        columnWidths: const {
-          0: FixedColumnWidth(120),
+        columnWidths: {
+          0: FixedColumnWidth(165),
           1: FixedColumnWidth(70),
           2: FixedColumnWidth(100),
-          3: FixedColumnWidth(100),
-          4: FixedColumnWidth(100),
-          5: FixedColumnWidth(100),
-          6: FixedColumnWidth(100),
+          3: FixedColumnWidth(95),
+          4: FixedColumnWidth(95),
+          5: FixedColumnWidth(95), // Rebat Amt column
+          6: FixedColumnWidth(95), // OS Amt column
         },
         children: [
           ...group1Statements.map(_buildDataRow).toList(),
@@ -144,16 +142,16 @@ class AccountStatementScreen extends StatelessWidget {
         ],
       );
 
-      // Group 3 Table without top border for title
+
       final group3Title = Table(
-        columnWidths: const {
-          0: FixedColumnWidth(130),
+        columnWidths: {
+          0: FixedColumnWidth(165),
           1: FixedColumnWidth(70),
           2: FixedColumnWidth(100),
-          3: FixedColumnWidth(100),
-          4: FixedColumnWidth(100),
-          5: FixedColumnWidth(100),
-          6: FixedColumnWidth(100),
+          3: FixedColumnWidth(95),
+          4: FixedColumnWidth(95),
+          5: FixedColumnWidth(95),
+          6: FixedColumnWidth(95),
         },
         children: [
           TableRow(
@@ -177,14 +175,14 @@ class AccountStatementScreen extends StatelessWidget {
       // Group 3 data rows with border
       final group3Table = Table(
         border: TableBorder.all(),
-        columnWidths: const {
-          0: FixedColumnWidth(120),
+        columnWidths: {
+          0: FixedColumnWidth(165),
           1: FixedColumnWidth(70),
           2: FixedColumnWidth(100),
-          3: FixedColumnWidth(100),
-          4: FixedColumnWidth(100),
-          5: FixedColumnWidth(100),
-          6: FixedColumnWidth(100),
+          3: FixedColumnWidth(95),
+          4: FixedColumnWidth(95),
+          5: FixedColumnWidth(95),
+          6: FixedColumnWidth(95),
         },
         children: [
           ...group3Statements.map(_buildDataRow).toList(),
@@ -195,14 +193,14 @@ class AccountStatementScreen extends StatelessWidget {
       // Grand total row
       final grandTotalTable = Table(
         border: TableBorder.all(),
-        columnWidths: const {
-          0: FixedColumnWidth(120),
+        columnWidths: {
+          0: FixedColumnWidth(165),
           1: FixedColumnWidth(70),
           2: FixedColumnWidth(100),
-          3: FixedColumnWidth(100),
-          4: FixedColumnWidth(100),
-          5: FixedColumnWidth(100),
-          6: FixedColumnWidth(100),
+          3: FixedColumnWidth(95),
+          4: FixedColumnWidth(95),
+          5: FixedColumnWidth(95),
+          6: FixedColumnWidth(95),
         },
         children: [
           _buildTotalRow('Grand Total', grandDue, grandPaid, grandOs, grandRebat),
@@ -294,7 +292,6 @@ class AccountStatementScreen extends StatelessWidget {
         ),
       ],
     );
-
   }
 
   TableRow _buildDataRow(Statement s) {
@@ -321,16 +318,17 @@ class AccountStatementScreen extends StatelessWidget {
           child: Padding(
               padding: const EdgeInsets.all(10),
               child: Text(_formatCurrency(s.amtReceived)))),
-      Align(
-          alignment: Alignment.centerRight,
-          child: Padding(
-              padding: const EdgeInsets.all(10),
-              child: Text(_formatCurrency(s.osAmt)))),
+      // Rebat Amt column moved before OS Amt
       Align(
           alignment: Alignment.centerRight,
           child: Padding(
               padding: const EdgeInsets.all(10),
               child: Text(_formatCurrency(s.rebatAmt)))),
+      Align(
+          alignment: Alignment.centerRight,
+          child: Padding(
+              padding: const EdgeInsets.all(10),
+              child: Text(_formatCurrency(s.osAmt)))),
     ]);
   }
 
@@ -355,17 +353,18 @@ class AccountStatementScreen extends StatelessWidget {
               padding: const EdgeInsets.all(10),
               child: Text(_formatCurrency(paid),
                   style: const TextStyle(fontWeight: FontWeight.bold)))),
-      Align(
-          alignment: Alignment.centerRight,
-          child: Padding(
-              padding: const EdgeInsets.all(10),
-              child: Text(_formatCurrency(os),
-                  style: const TextStyle(fontWeight: FontWeight.bold)))),
+      // Rebat Amt column moved before OS Amt
       Align(
           alignment: Alignment.centerRight,
           child: Padding(
               padding: const EdgeInsets.all(10),
               child: Text(_formatCurrency(rebat),
+                  style: const TextStyle(fontWeight: FontWeight.bold)))),
+      Align(
+          alignment: Alignment.centerRight,
+          child: Padding(
+              padding: const EdgeInsets.all(10),
+              child: Text(_formatCurrency(os),
                   style: const TextStyle(fontWeight: FontWeight.bold)))),
     ]);
   }

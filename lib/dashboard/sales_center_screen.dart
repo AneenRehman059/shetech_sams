@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:washmen/colors.dart';
 import 'package:washmen/customs/other_app_bar.dart';
-
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import '../bottom_app_bar/bottom_app_bar.dart';
+import '../controllers/social_controller.dart';
+import '../customs/app_bar.dart';
 
 class SalesCenterScreen extends StatefulWidget {
   final String title;
@@ -14,9 +16,14 @@ class SalesCenterScreen extends StatefulWidget {
 }
 
 class _SalesCenterScreenState extends State<SalesCenterScreen> {
+  final SocialController socialController = Get.put(SocialController());
+
   @override
   Widget build(BuildContext context) {
     final themeColor = const Color(0xFF8A2B5B);
+    final mediaQuery = MediaQuery.of(context);
+    final screenWidth = mediaQuery.size.width;
+    final screenHeight = mediaQuery.size.height;
 
     return WillPopScope(
       onWillPop: () async {
@@ -25,79 +32,111 @@ class _SalesCenterScreenState extends State<SalesCenterScreen> {
       },
       child: Scaffold(
         backgroundColor: Colors.white,
-        appBar: OtherAppBar(
-          title: 'Sales Center',
-          onBackPressed: () {
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (_) => MainWrapper()),
-            );
-          },
-        ),
         body: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  height: 2,
-                  width: double.infinity,
-                  color: AppColors.appColor,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+
+              CustomAppBar(title: widget.title, showBackButton: true),
+
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: screenWidth * 0.04,
+                  vertical: screenHeight * 0.015,
                 ),
-                SizedBox(height: 30),
-                const Text(
+                child: Text(
                   'Main Offices',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: screenWidth * 0.045,
+                  ),
                 ),
-                const SizedBox(height: 10),
+              ),
 
-                officeName(title: 'BSM Developers Head Office - \n(LHR)'),
-                const SizedBox(height: 15),
-                officeBlock(
-                  themeColor,
-                  address: '56-D Broadway Commercial DHA\nPhase-8 Lahore',
-                  phone: '042-111-111-650',
-                  email: 'info@newmetrocity.com.pk',
-                ),
-                const SizedBox(height: 15),
+              /// 🔹 Scrollable list below
+              Expanded(
+                child: Obx(() {
+                  if (socialController.isLoading.value) {
+                    return Center(
+                      child: SpinKitWave(
+                        color: AppColors.appColor,
+                        size: 50.0,
+                      ),
+                    );
+                  }
 
-                officeName(title: 'Gwadar Golf City'),
-                const SizedBox(height: 15),
-                officeBlock(
-                  themeColor,
-                  address:
-                  '320, 3rd Floor Dr.Plaza Near 2 Talwar Clifton\nChowk opp. to Emerald Plaza Karachi',
-                  phone: '0800-00101',
-                  email: 'info@newmetrocity.com.pk',
-                ),
-                const SizedBox(height: 15),
-
-                officeName(title: 'New Metro City Sarai Alamgir'),
-              ],
-            ),
+                  return ListView.builder(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: screenWidth * 0.04,
+                      vertical: screenHeight * 0.01,
+                    ),
+                    itemCount: socialController.branches.length,
+                    itemBuilder: (context, index) {
+                      final branch = socialController.branches[index];
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          officeName(
+                            title: branch['brn_name'] ?? '',
+                            screenWidth: screenWidth,
+                          ),
+                          SizedBox(height: screenHeight * 0.015),
+                          officeBlock(
+                            themeColor,
+                            address: _formatAddress(branch),
+                            phone: branch['phone_no'] ?? '',
+                            email: branch['email_address'] ?? '',
+                            screenWidth: screenWidth,
+                          ),
+                          SizedBox(height: screenHeight * 0.025),
+                        ],
+                      );
+                    },
+                  );
+                }),
+              ),
+            ],
           ),
         ),
       ),
     );
   }
 
-  Widget officeName({required String title}) {
+  String _formatAddress(Map<String, dynamic> branch) {
+    List<String> addressParts = [];
+    if (branch['add_1'] != null) addressParts.add(branch['add_1']);
+    if (branch['add_2'] != null) addressParts.add(branch['add_2']);
+    if (branch['add_3'] != null) addressParts.add(branch['add_3']);
+    if (branch['add_4'] != null) addressParts.add(branch['add_4']);
+
+    return addressParts.join('\n');
+  }
+
+  Widget officeName({required String title, required double screenWidth}) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+      padding: EdgeInsets.symmetric(
+        horizontal: screenWidth * 0.03,
+        vertical: screenWidth * 0.04,
+      ),
       decoration: BoxDecoration(
         color: const Color(0xFF8A2B5B),
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(screenWidth * 0.02),
       ),
       child: Row(
         children: [
-          Image.asset('assets/images/building.png', height: 30, width: 30),
-          const SizedBox(width: 10),
+          Image.asset(
+            'assets/images/building.png',
+            height: screenWidth * 0.07,
+            width: screenWidth * 0.07,
+          ),
+          SizedBox(width: screenWidth * 0.025),
           Expanded(
             child: Text(
-              title,
-              style: const TextStyle(
+              title.trim(),
+              style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
+                fontSize: screenWidth * 0.04,
               ),
             ),
           ),
@@ -111,14 +150,15 @@ class _SalesCenterScreenState extends State<SalesCenterScreen> {
         required String address,
         required String phone,
         required String email,
+        required double screenWidth,
       }) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(12),
+      padding: EdgeInsets.all(screenWidth * 0.03),
       decoration: BoxDecoration(
         color: const Color(0xFFF0F3FF),
         border: Border.all(color: themeColor),
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(screenWidth * 0.02),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -127,28 +167,42 @@ class _SalesCenterScreenState extends State<SalesCenterScreen> {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Icon(Icons.location_on, size: 25),
-                const SizedBox(width: 10),
-                Expanded(child: Text(address)),
+                Icon(Icons.location_on, size: screenWidth * 0.06),
+                SizedBox(width: screenWidth * 0.025),
+                Expanded(
+                  child: Text(
+                    address,
+                    style: TextStyle(fontSize: screenWidth * 0.035),
+                  ),
+                ),
               ],
             ),
-          if (address.isNotEmpty) const SizedBox(height: 15),
+          if (address.isNotEmpty) SizedBox(height: screenWidth * 0.03),
           if (phone.isNotEmpty)
             Row(
               children: [
-                const Icon(Icons.phone, size: 25),
-                const SizedBox(width: 10),
-                Text(phone),
+                Icon(Icons.phone, size: screenWidth * 0.06),
+                SizedBox(width: screenWidth * 0.025),
+                Text(
+                  phone,
+                  style: TextStyle(fontSize: screenWidth * 0.035),
+                ),
               ],
             ),
-          if (phone.isNotEmpty) const SizedBox(height: 15),
-          Row(
-            children: [
-              const Icon(Icons.email, size: 25),
-              const SizedBox(width: 10),
-              Expanded(child: Text(email)),
-            ],
-          ),
+          if (phone.isNotEmpty) SizedBox(height: screenWidth * 0.03),
+          if (email.isNotEmpty)
+            Row(
+              children: [
+                Icon(Icons.email, size: screenWidth * 0.06),
+                SizedBox(width: screenWidth * 0.025),
+                Expanded(
+                  child: Text(
+                    email,
+                    style: TextStyle(fontSize: screenWidth * 0.035),
+                  ),
+                ),
+              ],
+            ),
         ],
       ),
     );

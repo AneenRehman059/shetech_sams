@@ -5,9 +5,11 @@ import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:get/get.dart';
 import 'package:washmen/colors.dart';
 
 import 'constants/download_contant.dart';
+import 'customs/toast_message.dart';
 
 class PDFViewerScreen extends StatefulWidget {
   final String title;
@@ -49,7 +51,8 @@ class _PDFViewerScreenState extends State<PDFViewerScreen> {
       }
 
       final dir = await getApplicationDocumentsDirectory();
-      final file = File('${dir.path}/temp_${DateTime.now().millisecondsSinceEpoch}.pdf');
+      final file = File(
+          '${dir.path}/temp_${DateTime.now().millisecondsSinceEpoch}.pdf');
 
       await file.writeAsBytes(bytes);
 
@@ -66,8 +69,12 @@ class _PDFViewerScreenState extends State<PDFViewerScreen> {
         isLoading = false;
         errorMessage = e.toString();
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to load PDF: $e')),
+
+      showTopSnackBar(
+        context,
+        "Error",
+        "Failed to load PDF: $e",
+        Colors.red.shade600,
       );
     }
   }
@@ -75,21 +82,23 @@ class _PDFViewerScreenState extends State<PDFViewerScreen> {
   Future<void> _downloadPdf() async {
     final status = await Permission.storage.request();
     if (status.isGranted) {
-      final result = await DownloadUtils.downloadFile(widget.pdfUrl, widget.title);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(result
-              ? 'PDF downloaded successfully'
-              : 'Failed to download PDF'),
-          backgroundColor: result ? Colors.green : Colors.red,
-        ),
+      final result =
+      await DownloadUtils.downloadFile(widget.pdfUrl, widget.title);
+
+
+      showTopSnackBar(
+        context,
+        "Download",
+        result ? "PDF downloaded successfully" : "Failed to download PDF",
+        result ? Colors.black45 : Colors.red,
       );
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Storage permission denied'),
-          backgroundColor: Colors.red,
-        ),
+
+      showTopSnackBar(
+        context,
+        "Permission Denied",
+        "Storage permission is required to download files",
+        Colors.orange.shade700,
       );
     }
   }
@@ -98,10 +107,16 @@ class _PDFViewerScreenState extends State<PDFViewerScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text(
+          widget.title,
+          style: TextStyle(color: AppColors.whiteBg),
+        ),
+        centerTitle: true,
+        iconTheme: IconThemeData(color: AppColors.whiteBg),
+        backgroundColor: AppColors.appColor,
         actions: [
           IconButton(
-            icon: const Icon(Icons.download),
+            icon: Icon(Icons.download, color: AppColors.whiteBg),
             onPressed: _downloadPdf,
             tooltip: 'Download PDF',
           ),
@@ -109,7 +124,7 @@ class _PDFViewerScreenState extends State<PDFViewerScreen> {
       ),
       body: isLoading
           ? Center(
-        child: SpinKitCircle(
+        child: SpinKitWave(
           color: AppColors.appColor,
           size: 50.0,
         ),
@@ -122,8 +137,12 @@ class _PDFViewerScreenState extends State<PDFViewerScreen> {
         autoSpacing: true,
         pageFling: true,
         onError: (error) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error: $error')),
+          // Use showTopSnackBar instead of Get.snackbar
+          showTopSnackBar(
+            context,
+            "Error",
+            "Error loading PDF: $error",
+            Colors.red.shade600,
           );
         },
       )

@@ -71,7 +71,7 @@ class _SOPsScreenState extends State<SOPsScreen>
       setState(() {
         _isDownloading[index] = false;
       });
-     print('Permission Denied');
+      print('Permission Denied');
     }
   }
 
@@ -88,47 +88,102 @@ class _SOPsScreenState extends State<SOPsScreen>
               showBackButton: true,
             ),
             Expanded(
-              child: Obx(() {
-                if (_companyController.isLoading.value) {
-                  return Center(
-                    child: SpinKitFadingCircle(
-                      color: AppColors.appColor,
-                      size: 50.0,
+              child: SingleChildScrollView(
+                padding: EdgeInsets.symmetric(
+                  horizontal: screenWidth * 0.04,
+                  vertical: screenHeight * 0.02,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text("Edit Profile",
+                        style:
+                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                    SizedBox(height: screenHeight * 0.02),
+
+                    /// Name
+                    const Text("Name"),
+                    SizedBox(height: screenHeight * 0.005),
+                    _buildTextField(controller: nameController),
+
+                    SizedBox(height: screenHeight * 0.015),
+
+                    /// Mobile
+                    Row(
+                      children: const [
+                        Text("Mobile No "),
+                        Text("*", style: TextStyle(color: Colors.red)),
+                      ],
                     ),
-                  );
-                }
+                    SizedBox(height: screenHeight * 0.005),
+                    _buildTextField(controller: mobileController),
 
-                if (_companyController.mobileSOPs.isEmpty) {
-                  return Center(
-                    child: Text(
-                      'No SOPs available',
-                      style: TextStyle(color: Colors.grey.shade600),
+                    SizedBox(height: screenHeight * 0.015),
+
+                    /// Email
+                    const Text("Email"),
+                    SizedBox(height: screenHeight * 0.005),
+                    _buildTextField(controller: emailController),
+
+                    SizedBox(height: screenHeight * 0.015),
+
+                    /// Address (fixed height)
+                    const Text("Address"),
+                    SizedBox(height: screenHeight * 0.005),
+                    SizedBox(
+                      height: screenHeight * 0.08,
+                      child: _buildTextField(
+                        controller: addressController,
+                        maxLines: 2,
+                      ),
                     ),
-                  );
-                }
 
-                return ListView.builder(
+                    SizedBox(height: screenHeight * 0.03),
 
-                  itemCount: _companyController.mobileSOPs.length,
-                  itemBuilder: (context, index) {
-                    final sop = _companyController.mobileSOPs[index];
-                    final path = sop['image_path']?.toString() ?? '';
-                    final fullUrl = '${ApiConstants.baseUrl}$path';
-                    final sopName =
-                        sop['SOPs_name']?.toString() ?? 'Unnamed SOP';
-                    final fileType =
-                    fullUrl.toLowerCase().endsWith('.pdf') ? 'PDF' : 'DOC';
+                    /// Profile Picture
+                    Row(
+                      children: [
+                        const Icon(Icons.person, size: 40),
+                        SizedBox(width: screenWidth * 0.02),
+                        const Text("Profile Picture"),
+                        const Spacer(),
+                        ElevatedButton(
+                          onPressed: () {},
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.amber[700],
+                            minimumSize:
+                            Size(screenWidth * 0.3, screenHeight * 0.05),
+                          ),
+                          child: const Text("SELECT IMAGE"),
+                        )
+                      ],
+                    ),
 
-                    return _buildSOPItem(
-                      context,
-                      sopName,
-                      fileType,
-                      fullUrl,
-                      index,
-                    );
-                  },
-                );
-              }),
+                    SizedBox(height: screenHeight * 0.05),
+
+                    /// Update button
+                    SizedBox(
+                      width: double.infinity,
+                      height: screenHeight * 0.06,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Get.snackbar("Success", "Profile Updated Successfully",
+                              snackPosition: SnackPosition.BOTTOM,
+                              backgroundColor: Colors.black54,
+                              colorText: Colors.white);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.amber[700],
+                        ),
+                        child: const Text(
+                          "UPDATE PROFILE",
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ],
         ),

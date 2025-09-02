@@ -109,7 +109,7 @@ class _PayOnlineScreenState extends State<PayOnlineScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    SpinKitFadingCircle(
+                    SpinKitWave(
                       color: AppColors.appColor,
                       size: 50.0,
                     ),
@@ -185,81 +185,87 @@ class _PayOnlineScreenState extends State<PayOnlineScreen> {
 
         final clientDetails = controller.clientDetailModel.value!.obj.clientDetailList!;
 
-        return ListView.builder(
-          padding: EdgeInsets.zero,
-          itemCount: clientDetails.length + 1,
-          itemBuilder: (context, index) {
-            if (index == 0) {
-              return _buildHeader(size, context);
-            }
+        return Stack(
+          children: [
+            // Fixed Header
+            Container(
+              height: size.height * 0.22,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: AppColors.appColor,
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(10),
+                  bottomRight: Radius.circular(10),
+                ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 90),
+                child: SafeArea(
+                  child: Stack(
+                    children: [
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: IconButton(
+                          icon: const Icon(Icons.arrow_back, color: Colors.white),
+                          onPressed: () => Navigator.pop(context),
+                        ),
+                      ),
+                      const Center(
+                        child: Text(
+                          'Pay Online',
+                          style: TextStyle(
+                            fontSize: 22,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
 
-            final client = clientDetails[index - 1];
-            final isFirstItem = index == 1;
+            // Scrollable Content
+            Padding(
+              padding: EdgeInsets.only(top: size.height * 0.22 - 90), // Adjust this value to match your design
+              child: ListView.builder(
+                padding: EdgeInsets.zero,
+                itemCount: clientDetails.length,
+                itemBuilder: (context, index) {
+                  final client = clientDetails[index];
+                  final isFirstItem = index == 0;
 
-            return Column(
-              children: [
-                Transform.translate(
-                  offset: Offset(0, isFirstItem ? -90 : -60),
-                  child: _buildProfileCard(client),
-                ),
-                Transform.translate(
-                  offset: Offset(0, isFirstItem ? -70 : -50),
-                  child: _buildInfoCards(client),
-                ),
-                Transform.translate(
-                  offset: Offset(0, isFirstItem ? -45 : -40),
-                  child: _buildVideoPreview(),
-                ),
-                SizedBox(height: 30),
-                Transform.translate(
-                  offset: Offset(0, isFirstItem ? -65 : -65),
-                  child: _buildActionButtons(client),
-                ),
-              ],
-            );
-          },
+                  return Column(
+                    children: [
+                      Transform.translate(
+                        offset: Offset(0, isFirstItem ? 1 : 20),
+                        child: _buildProfileCard(client),
+                      ),
+                      Transform.translate(
+                        offset: Offset(0, isFirstItem ? 10 : 30),
+                        child: _buildInfoCards(client),
+                      ),
+                      SizedBox(height: 10),
+                      Transform.translate(
+                        offset: Offset(0, isFirstItem ? 20 : 30),
+                        child: _buildActionButtons(client),
+                      ),
+                      Transform.translate(
+                        offset: Offset(0, isFirstItem ? 30 : 40),
+                        child: _buildVideoPreview(),
+                      ),
+                      SizedBox(height: 40),
+                    ],
+                  );
+                },
+              ),
+            ),
+          ],
         );
       }),
     );
   }
-
-  Widget _buildHeader(Size size, BuildContext context) => Container(
-    height: size.height * 0.22,
-    width: double.infinity,
-    decoration: BoxDecoration(
-      color: AppColors.appColor,
-      borderRadius: const BorderRadius.only(
-        bottomLeft: Radius.circular(10),
-        bottomRight: Radius.circular(10),
-      ),
-    ),
-    child: Padding(
-      padding: const EdgeInsets.only(bottom: 90),
-      child: SafeArea(
-        child: Stack(
-          children: [
-            Align(
-              alignment: Alignment.centerLeft,
-              child: IconButton(
-                icon: const Icon(Icons.arrow_back, color: Colors.white),
-                onPressed: () => Navigator.pop(context),
-              ),
-            ),
-            const Center(
-              child: Text(
-                'Pay Online',
-                style: TextStyle(
-                  fontSize: 22,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    ),
-  );
 
   Widget _buildProfileCard(ClientDetail client) => Container(
     margin: EdgeInsets.symmetric(horizontal: 16),

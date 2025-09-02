@@ -153,13 +153,13 @@ class _PaymentPlanScreenState extends State<PaymentPlanScreen> {
                                 borderRadius: BorderRadius.circular(10),
                                 child: CachedNetworkImage(
                                   imageUrl: plan["image_url"]!,
-                                  fit: BoxFit.cover,
+                                  fit: BoxFit.fill,
                                   height: MediaQuery.of(context).size.height * 0.6,
                                   width: double.infinity,
                                   placeholder: (context, url) => Container(
                                     height: MediaQuery.of(context).size.height * 0.6,
                                     color: Colors.grey[200],
-                                    child: Center(child:  SpinKitCircle(color: AppColors.appColor, size: 50.0),),
+                                    child: Center(child:  SpinKitWave(color: AppColors.appColor, size: 50.0),),
                                   ),
                                   errorWidget: (context, url, error) => Container(
                                     height: MediaQuery.of(context).size.height * 0.6,
@@ -184,7 +184,7 @@ class _PaymentPlanScreenState extends State<PaymentPlanScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        SpinKitCircle(color: AppColors.appColor, size: 50.0),
+                        SpinKitWave(color: AppColors.appColor, size: 50.0),
                         SizedBox(height: 10),
                         Text('Loading...',
                             style: TextStyle(color: AppColors.appColor, fontSize: 16)),

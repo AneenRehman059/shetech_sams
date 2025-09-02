@@ -12,7 +12,9 @@ import 'package:washmen/dashboard/dashboard_menus/social_screen.dart';
 import '../bottom_app_bar/bottom_app_bar.dart';
 import '../constants/image_constant.dart';
 import '../customs/dialogs/development_progress_dialog.dart';
+import '../customs/login_check_util.dart';
 import 'dashboard_menus/payment_plans_screen.dart';
+import '../login_screen.dart';
 
 class DashboardMenus extends StatefulWidget {
   const DashboardMenus({super.key});
@@ -63,6 +65,37 @@ class _DashboardMenusState extends State<DashboardMenus> {
     );
   }
 
+  void _handleNavigationWithLoginCheck(BuildContext context, Widget screen, {bool requiresLogin = false}) async {
+    if (requiresLogin) {
+      final isLoggedIn = await LoginCheckUtil.isUserLoggedIn();
+
+      if (!isLoggedIn) {
+        // Show login required dialog
+        LoginCheckUtil.showLoginRequiredDialog(
+          context,
+          onYesPressed: () {
+            // Navigate to login screen
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => LoginScreen()),
+            );
+          },
+        );
+        return;
+      }
+    }
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MainWrapper(
+          initialIndex: 0,
+          child: screen,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
@@ -72,14 +105,10 @@ class _DashboardMenusState extends State<DashboardMenus> {
       {
         'icon': ImageConstant.portal,
         'title': 'Customer Portal',
-        'onTap': () => Navigator.push(
+        'onTap': () => _handleNavigationWithLoginCheck(
           context,
-          MaterialPageRoute(
-            builder: (context) => MainWrapper(
-              initialIndex: 0,
-              child: CustomerPortalScreen(),
-            ),
-          ),
+          CustomerPortalScreen(),
+          requiresLogin: true,
         ),
       },
       {
@@ -124,23 +153,12 @@ class _DashboardMenusState extends State<DashboardMenus> {
       {
         'icon': ImageConstant.payment,
         'title': 'Online Payments',
-        'onTap': () => Navigator.push(
+        'onTap': () => _handleNavigationWithLoginCheck(
           context,
-          MaterialPageRoute(
-            builder: (context) => MainWrapper(
-              initialIndex: 0,
-              child: OnlinePaymentsScreen(),
-            ),
-          ),
+          OnlinePaymentsScreen(),
+          requiresLogin: true,
         ),
       },
-
-      // {
-      //   'icon': ImageConstant.devlop,
-      //   'title': 'Development Progress',
-      //   'onTap': () {}
-      // },
-
       {
         'icon': ImageConstant.devlop,
         'title': 'Development Progress',
@@ -154,7 +172,6 @@ class _DashboardMenusState extends State<DashboardMenus> {
           ),
         ),
       },
-
       {
         'icon': ImageConstant.gallery,
         'title': 'Events',
@@ -186,12 +203,6 @@ class _DashboardMenusState extends State<DashboardMenus> {
           ),
         ),
       },
-
-      // {
-      //   'icon': ImageConstant.sops,
-      //   'title': 'SOPs',
-      //   'onTap': () => print('SOPs tapped'),
-      // },
       {
         'icon': ImageConstant.sops,
         'title': 'SOPs',

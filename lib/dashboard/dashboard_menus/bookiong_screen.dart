@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:washmen/customs/app_bar.dart';
 import '../../colors.dart';
 import '../../controllers/get_projects_controller.dart';
-import '../../customs/app_bar.dart';
 import '../../customs/custom_buttons.dart';
 
 class BookingScreen extends StatefulWidget {
@@ -30,355 +31,481 @@ class _BookingScreenState extends State<BookingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(100),
-        child: CustomAppBar(),
-      ),
-      body: Stack(
-        children: [
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: Opacity(
-              opacity: 0.1,
-              child: Image.asset(
-                'assets/images/booking_bg.png',
-                height: 200,
-                fit: BoxFit.contain,
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: Column(
+          children: [
+            Container(
+              color: Colors.white,
+              child: Column(
+                children: [
+                  SizedBox(height: 8),
+                  CustomAppBar(
+                    title: 'Booking',
+                  )
+                ],
               ),
             ),
-          ),
-          Obx(() {
-            return Stack(
-              children: [
-                SingleChildScrollView(
-                  padding: EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-
-                      _buildFieldWithHeader(
-                        header: 'Project*',
-                        child: DropdownButtonFormField<String>(
-                          decoration: _dropdownDecoration('Project'),
-                          value: selectedProject,
-                          items: bookingController.branches.length > 1
-                              ? bookingController.branches.sublist(1).map((branch) {
-                            return DropdownMenuItem<String>(
-                              value: branch["brn_name"]?.trim(),
-                              child: Text(branch["brn_name"]?.trim() ?? ""),
-                            );
-                          }).toList()
-                              : [], // Empty list if there's only 1 item or less
-                          onChanged: bookingController.isLoading.value
-                              ? null
-                              : (value) {
-                            setState(() {
-                              selectedProject = value;
-                              selectedBlock = null;
-                            });
-                            bookingController.selectBranch(value ?? "");
-                          },
-                          hint: Text(
-                            bookingController.isLoading.value
-                                ? "Loading projects..."
-                                : "Select Project",
-                            style: TextStyle(
-                                color: bookingController.isLoading.value
-                                    ? Colors.black38
-                                    : Colors.black54,
-                                fontSize: 14),
-                          ),
-                          isExpanded: true,
-                          borderRadius: BorderRadius.circular(10),
-                          disabledHint: Text(
-                            "Loading projects...",
-                            style: TextStyle(color: Colors.black38, fontSize: 14),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-
-                      _buildFieldWithHeader(
-                        header: 'Block*',
-                        child: DropdownButtonFormField<String>(
-                          decoration: _dropdownDecoration('Block'),
-                          value: selectedBlock,
-                          items: bookingController.blocks.map((block) {
-                            return DropdownMenuItem<String>(
-                              value: block["block_name"],
-                              child: Text(block["block_name"] ?? ""),
-                            );
-                          }).toList(),
-                          onChanged: bookingController.isLoading.value
-                              ? null
-                              : (value) {
-                            setState(() {
-                              selectedBlock = value;
-                            });
-                            bookingController.selectBlock(value ?? "");
-                          },
-                          hint: Text(
-                            bookingController.isLoading.value
-                                ? "Select Block"
-                                : "Select Block",
-                            style: TextStyle(
-                                color: bookingController.isLoading.value
-                                    ? Colors.black38
-                                    : Colors.black54,
-                                fontSize: 14),
-                          ),
-                          isExpanded: true,
-                          borderRadius: BorderRadius.circular(10),
-                          disabledHint: Text(
-                            "Loading blocks",
-                            style: TextStyle(color: Colors.black38, fontSize: 14),
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 12),
-
-                      SizedBox(height: 12),
-                      _buildFieldWithHeader(
-                        header: 'Plot Nature*',
-                        child: DropdownButtonFormField<String>(
-                          decoration: _dropdownDecoration('Plot Nature'),
-                          value: selectedPlotNatureCode,
-                          items: bookingController.plotNatures.map((nature) {
-                            return DropdownMenuItem<String>(
-                              value: nature["plot_nature"],
-                              child: Text(nature["plot_nature_desc"] ?? ""),
-                            );
-                          }).toList(),
-                          onChanged: bookingController.isLoading.value
-                              ? null
-                              : (value) {
-                            setState(() {
-                              selectedPlotNatureCode = value;
-                            });
-                          },
-                          hint: Text(
-                            bookingController.isLoading.value
-                                ? "Loading plot natures..."
-                                : "Select Plot Nature",
-                            style: TextStyle(
-                                color: bookingController.isLoading.value
-                                    ? Colors.black38
-                                    : Colors.black54,
-                                fontSize: 14),
-                          ),
-                          isExpanded: true,
-                          borderRadius: BorderRadius.circular(10),
-                          disabledHint: Text(
-                            "Loading plot natures...",
-                            style: TextStyle(color: Colors.black38, fontSize: 14),
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 12),
-                      _buildFieldWithHeader(
-                        header: 'Plot Type *',
-                        child: DropdownButtonFormField<String>(
-                          decoration: _dropdownDecoration('Plot Type'),
-                          value: selectedPlotType,
-                          items: bookingController.plotTypes.map((type) {
-                            return DropdownMenuItem<String>(
-                              value: type["plot_type"],
-                              child: Text(type["plot_type_desc"] ?? ""),
-                            );
-                          }).toList(),
-                          onChanged: bookingController.isLoading.value
-                              ? null
-                              : (value) {
-                            setState(() {
-                              selectedPlotType = value;
-                            });
-                          },
-                          hint: Text(
-                            bookingController.isLoading.value
-                                ? "Loading plot types..."
-                                : "Select Plot Type",
-                            style: TextStyle(
-                                color: bookingController.isLoading.value
-                                    ? Colors.black38
-                                    : Colors.black54,
-                                fontSize: 14),
-                          ),
-                          isExpanded: true,
-                          borderRadius: BorderRadius.circular(10),
-                          disabledHint: Text(
-                            "Loading plot types...",
-                            style: TextStyle(color: Colors.black38, fontSize: 14),
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 12),
-                      _buildFieldWithHeader(
-                        header: 'Plot Size*',
-                        child: DropdownButtonFormField<String>(
-                          decoration: _dropdownDecoration('Plot Size'),
-                          value: selectedPlotSize,
-                          items: bookingController.plotSizes.map((plot) {
-                            return DropdownMenuItem<String>(
-                              value: plot["plot_size_code"],
-                              child: Text(plot["plot_size_code"] ?? ""),
-                            );
-                          }).toList(),
-                          onChanged: (value) {
-                            setState(() {
-                              selectedPlotSize = value;
-                            });
-                          },
-                          isExpanded: true,
-                          borderRadius: BorderRadius.circular(10),
-                          hint: const Text(
-                            "Select Plot Size",
-                            style: TextStyle(color: Colors.black38, fontSize: 14),
-                          ),
-                        ),
-                      ),
-
-                      SizedBox(height: 12),
-                      _buildFieldWithHeader(
-                        controller: plotNoController,
-                        header: 'Plot No*',
-                        child: _buildTextField('Plot No', plotNoController),
-                      ),
-                      SizedBox(height: 20),
-
-                      _buildFieldWithHeader(
-                        controller: nameController,
-                        header: 'Name*',
-                        child: _buildTextField('Name', nameController),
-                      ),
-                      SizedBox(height: 12),
-
-                      _buildFieldWithHeader(
-                        controller: cnicController,
-                        header: 'CNIC*',
-                        child: _buildTextField('CNIC', cnicController,
-                            keyboardType: TextInputType.number),
-                      ),
-                      const SizedBox(height: 12),
-
-                      _buildFieldWithHeader(
-                        controller: cityController,
-                        header: 'City*',
-                        child: _buildTextField('City', cityController,keyboardType: TextInputType.name),
-                      ),
-                      const SizedBox(height: 12),
-
-                      _buildFieldWithHeader(
-                        controller: contactController,
-                        header: 'Contact Number*',
-                        child: _buildTextField(
-                            'Contact No', contactController,
-                            keyboardType: TextInputType.phone),
-                      ),
-                      const SizedBox(height: 12),
-
-                      _buildFieldWithHeader(
-                        controller: emailController,
-                        header: 'Email',
-                        child: TextFormField(
-                          controller: emailController,
-                          keyboardType: TextInputType.emailAddress,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return null; // Email is optional in your case
-                            }
-                            if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
-                              return 'Please enter a valid email';
-                            }
-                            return null;
-                          },
-                          decoration: InputDecoration(
-                            hintText: 'Add Email',
-                            hintStyle: const TextStyle(color: Colors.black38, fontSize: 14),
-                            filled: true,
-                            fillColor: Colors.white,
-                            border: OutlineInputBorder(
-                              borderSide: BorderSide(color: AppColors.appColor),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: AppColors.appColor),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: AppColors.appColor, width: 2),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 30),
-
-                      bookingController.isLoading.value
-                          ? Center(
-                          child: SpinKitCircle(
-                              color: Colors.black87, size: 30))
-                          : CustomButton(
-                        text: 'Submit',
-                        onPressed: _submitForm,
-                      ),
-
-                      SizedBox(height: 20),
-                    ],
+            Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage('assets/images/booking_bg.png'),
+                    opacity: 0.1,
+                    fit: BoxFit.contain,
+                    alignment: Alignment.bottomCenter,
                   ),
                 ),
-                // if (bookingController.isLoading.value)
-                //   Center(
-                //     child: Container(
-                //       padding: EdgeInsets.all(20),
-                //       child: Column(
-                //         mainAxisSize: MainAxisSize.min,
-                //         children: [
-                //           SpinKitCircle(color: AppColors.appColor, size: 50),
-                //           SizedBox(height: 10),
-                //           Text(
-                //             'Loading',
-                //             style: TextStyle(color: AppColors.appColor),
-                //           ),
-                //         ],
-                //       ),
-                //     ),
-                //   ),
-              ],
-            );
-          }),
-        ],
+                child: Obx(() {
+                  return SingleChildScrollView(
+                    padding: EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        _buildFieldWithHeader(
+                          header: 'Project*',
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton2<String>(
+                              isExpanded: true,
+                              hint: Text(
+                                bookingController.isLoading.value
+                                    ? "Loading projects..."
+                                    : "Select Project",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: bookingController.isLoading.value
+                                      ? Colors.black38
+                                      : Colors.black54,
+                                ),
+                              ),
+                              items: bookingController.branches.length > 1
+                                  ? bookingController.branches.sublist(1).map((branch) {
+                                return DropdownMenuItem<String>(
+                                  value: branch["brn_name"]?.trim(),
+                                  child: Text(
+                                    branch["brn_name"]?.trim() ?? "",
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                );
+                              }).toList()
+                                  : [],
+                              value: selectedProject,
+                              onChanged: bookingController.isLoading.value
+                                  ? null
+                                  : (value) {
+                                setState(() {
+                                  selectedProject = value;
+                                  selectedBlock = null;
+                                });
+                                bookingController.selectBranch(value ?? "");
+                              },
+                              buttonStyleData: ButtonStyleData(
+                                height: 50,
+                                width: double.infinity,
+                                padding: const EdgeInsets.only(left: 14, right: 14),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(
+                                    color: AppColors.appColor,
+                                  ),
+                                  color: Colors.white,
+                                ),
+                                elevation: 0,
+                              ),
+                              iconStyleData: const IconStyleData(
+                                icon: Icon(
+                                  Icons.arrow_drop_down,
+                                  color: Colors.black45,
+                                ),
+                                iconSize: 30,
+                              ),
+                              dropdownStyleData: DropdownStyleData(
+                                maxHeight: 200,
+                                width: MediaQuery.of(context).size.width * 0.9,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                offset: const Offset(0, -5),
+                                scrollbarTheme: ScrollbarThemeData(
+                                  radius: const Radius.circular(40),
+                                  thickness: MaterialStateProperty.all<double>(6),
+                                  thumbVisibility: MaterialStateProperty.all<bool>(true),
+                                ),
+                              ),
+                              menuItemStyleData: const MenuItemStyleData(
+                                height: 40,
+                                padding: EdgeInsets.only(left: 14, right: 14),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        _buildFieldWithHeader(
+                          header: 'Block*',
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton2<String>(
+                              isExpanded: true,
+                              hint: Text(
+                                bookingController.isLoading.value
+                                    ? "Loading blocks..."
+                                    : "Select Block",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: bookingController.isLoading.value
+                                      ? Colors.black38
+                                      : Colors.black54,
+                                ),
+                              ),
+                              items: bookingController.blocks.map((block) {
+                                return DropdownMenuItem<String>(
+                                  value: block["block_name"],
+                                  child: Text(
+                                    block["block_name"] ?? "",
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                              value: selectedBlock,
+                              onChanged: bookingController.isLoading.value
+                                  ? null
+                                  : (value) {
+                                setState(() {
+                                  selectedBlock = value;
+                                });
+                                bookingController.selectBlock(value ?? "");
+                              },
+                              buttonStyleData: ButtonStyleData(
+                                height: 50,
+                                width: double.infinity,
+                                padding: const EdgeInsets.only(left: 14, right: 14),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(
+                                    color: AppColors.appColor,
+                                  ),
+                                  color: Colors.white,
+                                ),
+                                elevation: 0,
+                              ),
+                              iconStyleData: const IconStyleData(
+                                icon: Icon(
+                                  Icons.arrow_drop_down,
+                                  color: Colors.black45,
+                                ),
+                                iconSize: 30,
+                              ),
+                              dropdownStyleData: DropdownStyleData(
+                                maxHeight: 200,
+                                width: MediaQuery.of(context).size.width * 0.9,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                offset: const Offset(0, -5),
+                                scrollbarTheme: ScrollbarThemeData(
+                                  radius: const Radius.circular(40),
+                                  thickness: MaterialStateProperty.all<double>(6),
+                                  thumbVisibility: MaterialStateProperty.all<bool>(true),
+                                ),
+                              ),
+                              menuItemStyleData: const MenuItemStyleData(
+                                height: 40,
+                                padding: EdgeInsets.only(left: 14, right: 14),
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 12),
+                        _buildFieldWithHeader(
+                          header: 'Plot Nature*',
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton2<String>(
+                              isExpanded: true,
+                              hint: Text(
+                                bookingController.isLoading.value
+                                    ? "Loading plot natures..."
+                                    : "Select Plot Nature",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: bookingController.isLoading.value
+                                      ? Colors.black38
+                                      : Colors.black54,
+                                ),
+                              ),
+                              items: bookingController.plotNatures.map((nature) {
+                                return DropdownMenuItem<String>(
+                                  value: nature["plot_nature"],
+                                  child: Text(
+                                    nature["plot_nature_desc"] ?? "",
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                              value: selectedPlotNatureCode,
+                              onChanged: bookingController.isLoading.value
+                                  ? null
+                                  : (value) {
+                                setState(() {
+                                  selectedPlotNatureCode = value;
+                                });
+                              },
+                              buttonStyleData: ButtonStyleData(
+                                height: 50,
+                                width: double.infinity,
+                                padding: const EdgeInsets.only(left: 14, right: 14),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(
+                                    color: AppColors.appColor,
+                                  ),
+                                  color: Colors.white,
+                                ),
+                                elevation: 0,
+                              ),
+                              iconStyleData: const IconStyleData(
+                                icon: Icon(
+                                  Icons.arrow_drop_down,
+                                  color: Colors.black45,
+                                ),
+                                iconSize: 30,
+                              ),
+                              dropdownStyleData: DropdownStyleData(
+                                maxHeight: 200,
+                                width: MediaQuery.of(context).size.width * 0.9,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                offset: const Offset(0, -5),
+                                scrollbarTheme: ScrollbarThemeData(
+                                  radius: const Radius.circular(40),
+                                  thickness: MaterialStateProperty.all<double>(6),
+                                  thumbVisibility: MaterialStateProperty.all<bool>(true),
+                                ),
+                              ),
+                              menuItemStyleData: const MenuItemStyleData(
+                                height: 40,
+                                padding: EdgeInsets.only(left: 14, right: 14),
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 12),
+                        _buildFieldWithHeader(
+                          header: 'Plot Type *',
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton2<String>(
+                              isExpanded: true,
+                              hint: Text(
+                                bookingController.isLoading.value
+                                    ? "Loading plot types..."
+                                    : "Select Plot Type",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: bookingController.isLoading.value
+                                      ? Colors.black38
+                                      : Colors.black54,
+                                ),
+                              ),
+                              items: bookingController.plotTypes.map((type) {
+                                return DropdownMenuItem<String>(
+                                  value: type["plot_type"],
+                                  child: Text(
+                                    type["plot_type_desc"] ?? "",
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                              value: selectedPlotType,
+                              onChanged: bookingController.isLoading.value
+                                  ? null
+                                  : (value) {
+                                setState(() {
+                                  selectedPlotType = value;
+                                });
+                              },
+                              buttonStyleData: ButtonStyleData(
+                                height: 50,
+                                width: double.infinity,
+                                padding: const EdgeInsets.only(left: 14, right: 14),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(
+                                    color: AppColors.appColor,
+                                  ),
+                                  color: Colors.white,
+                                ),
+                                elevation: 0,
+                              ),
+                              iconStyleData: const IconStyleData(
+                                icon: Icon(
+                                  Icons.arrow_drop_down,
+                                  color: Colors.black45,
+                                ),
+                                iconSize: 30,
+                              ),
+                              dropdownStyleData: DropdownStyleData(
+                                maxHeight: 200,
+                                width: MediaQuery.of(context).size.width * 0.9,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                offset: const Offset(0, -5),
+                                scrollbarTheme: ScrollbarThemeData(
+                                  radius: const Radius.circular(40),
+                                  thickness: MaterialStateProperty.all<double>(6),
+                                  thumbVisibility: MaterialStateProperty.all<bool>(true),
+                                ),
+                              ),
+                              menuItemStyleData: const MenuItemStyleData(
+                                height: 40,
+                                padding: EdgeInsets.only(left: 14, right: 14),
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 12),
+                        _buildFieldWithHeader(
+                          header: 'Plot Size*',
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton2<String>(
+                              isExpanded: true,
+                              hint: const Text(
+                                "Select Plot Size",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.black54,
+                                ),
+                              ),
+                              items: bookingController.plotSizes.map((plot) {
+                                return DropdownMenuItem<String>(
+                                  value: plot["plot_size_code"],
+                                  child: Text(
+                                    plot["plot_size_code"] ?? "",
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                              value: selectedPlotSize,
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedPlotSize = value;
+                                });
+                              },
+                              buttonStyleData: ButtonStyleData(
+                                height: 50,
+                                width: double.infinity,
+                                padding: const EdgeInsets.only(left: 14, right: 14),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(
+                                    color: AppColors.appColor,
+                                  ),
+                                  color: Colors.white,
+                                ),
+                                elevation: 0,
+                              ),
+                              iconStyleData: const IconStyleData(
+                                icon: Icon(
+                                  Icons.arrow_drop_down,
+                                  color: Colors.black45,
+                                ),
+                                iconSize: 30,
+                              ),
+                              dropdownStyleData: DropdownStyleData(
+                                maxHeight: 200,
+                                width: MediaQuery.of(context).size.width * 0.9,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                offset: const Offset(0, -5),
+                                scrollbarTheme: ScrollbarThemeData(
+                                  radius: const Radius.circular(40),
+                                  thickness: MaterialStateProperty.all<double>(6),
+                                  thumbVisibility: MaterialStateProperty.all<bool>(true),
+                                ),
+                              ),
+                              menuItemStyleData: const MenuItemStyleData(
+                                height: 40,
+                                padding: EdgeInsets.only(left: 14, right: 14),
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 12),
+                        _buildFieldWithHeader(
+                          controller: plotNoController,
+                          header: 'Plot No*',
+                        ),
+                        SizedBox(height: 20),
+                        _buildFieldWithHeader(
+                          controller: nameController,
+                          header: 'Name*',
+                        ),
+                        SizedBox(height: 12),
+                        _buildFieldWithHeader(
+                          controller: cnicController,
+                          header: 'CNIC*',
+                          keyboardType: TextInputType.number,
+                        ),
+                        const SizedBox(height: 12),
+                        _buildFieldWithHeader(
+                          controller: cityController,
+                          header: 'City*',
+                          keyboardType: TextInputType.name,
+                        ),
+                        const SizedBox(height: 12),
+                        _buildFieldWithHeader(
+                          controller: contactController,
+                          header: 'Contact Number*',
+                          keyboardType: TextInputType.phone,
+                        ),
+                        const SizedBox(height: 12),
+                        _buildFieldWithHeader(
+                          controller: emailController,
+                          header: 'Email',
+                          keyboardType: TextInputType.emailAddress,
+                          isEmail: true,
+                        ),
+                        SizedBox(height: 30),
+                        bookingController.isLoading.value
+                            ? Center(
+                          child: SpinKitCircle(
+                            color: Colors.black87,
+                            size: 30,
+                          ),
+                        )
+                            : CustomButton(
+                          text: 'Submit',
+                          onPressed: _submitForm,
+                        ),
+                        SizedBox(height: 20),
+                      ],
+                    ),
+                  );
+                }),
+              ),
+            ),
+          ],
+        ),
       ),
-    );
-  }
-
-  InputDecoration _dropdownDecoration(String label) {
-    return InputDecoration(
-      filled: true,
-      fillColor: Colors.white,
-      border: OutlineInputBorder(
-        borderSide: BorderSide(color: AppColors.appColor),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderSide: BorderSide(color: AppColors.appColor),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderSide: BorderSide(color: AppColors.appColor, width: 2),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
     );
   }
 
   Widget _buildFieldWithHeader({
     required String header,
-    Widget? child,
     TextEditingController? controller,
     TextInputType? keyboardType,
+    Widget? child,
+    bool isEmail = false,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -394,61 +521,43 @@ class _BookingScreenState extends State<BookingScreen> {
             ),
           ),
         ),
-        controller != null
-            ? TextFormField(
-          controller: controller,
-          keyboardType: keyboardType,
-          decoration: InputDecoration(
-            hintText: 'Add ${header.replaceAll(' *', '')}',
-            hintStyle: const TextStyle(color: Colors.black38, fontSize: 14),
-            filled: true,
-            fillColor: Colors.white,
-            border: OutlineInputBorder(
-              borderSide: BorderSide(color: AppColors.appColor),
-              borderRadius: BorderRadius.circular(10),
+        if (child != null) child,
+        if (controller != null)
+          TextFormField(
+            controller: controller,
+            keyboardType: keyboardType,
+            validator: isEmail
+                ? (value) {
+              if (value == null || value.isEmpty) {
+                return null;
+              }
+              if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+                return 'Please enter a valid email';
+              }
+              return null;
+            }
+                : null,
+            decoration: InputDecoration(
+              hintText: 'Add ${header.replaceAll('*', '').trim()}',
+              hintStyle: const TextStyle(color: Colors.black38, fontSize: 14),
+              filled: true,
+              fillColor: Colors.white,
+              border: OutlineInputBorder(
+                borderSide: BorderSide(color: AppColors.appColor),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: AppColors.appColor),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: AppColors.appColor, width: 2),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             ),
-            enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: AppColors.appColor),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: AppColors.appColor, width: 2),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            contentPadding: const EdgeInsets.symmetric(
-                horizontal: 16, vertical: 14),
           ),
-        )
-            : child ?? const SizedBox.shrink(),
       ],
-    );
-  }
-
-  Widget _buildTextField(String label, TextEditingController controller,
-      {TextInputType? keyboardType}) {
-    return TextFormField(
-      controller: controller,
-      decoration: InputDecoration(
-        hintText: 'Add $label',
-        hintStyle: const TextStyle(color: Colors.black38, fontSize: 14),
-        filled: true,
-        fillColor: Colors.white,
-        border: OutlineInputBorder(
-          borderSide: BorderSide(color: AppColors.appColor),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: AppColors.appColor),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: AppColors.appColor, width: 2),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        contentPadding:
-        const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      ),
-      keyboardType: keyboardType,
     );
   }
 
@@ -474,19 +583,6 @@ class _BookingScreenState extends State<BookingScreen> {
       return;
     }
 
-    print("---- Booking Form Data ----");
-    print("Selected Project Name: $selectedProject");
-    print("Selected Project Code: ${bookingController.selectedBranchCode.value}");
-    print("Selected Block Name: $selectedBlock");
-    print("Selected Block Code: ${bookingController.selectedBlockCode.value}");
-    print("Selected Plot Size Code: $selectedPlotSize");
-    print("Plot No: ${plotNoController.text.trim()}");
-    print("Name: ${nameController.text.trim()}");
-    print("CNIC: ${cnicController.text.trim()}");
-    print("Contact No: ${contactController.text.trim()}");
-    print("Email: ${emailController.text.trim()}");
-    print("----------------------------");
-
     bookingController.submitBooking(
       brnCode: bookingController.selectedBranchCode.value,
       idNo: cnicController.text.trim(),
@@ -500,5 +596,4 @@ class _BookingScreenState extends State<BookingScreen> {
       plotType: selectedPlotType ?? "",
     );
   }
-
 }

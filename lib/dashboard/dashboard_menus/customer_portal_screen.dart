@@ -52,7 +52,7 @@ class _CustomerPortalScreenState extends State<CustomerPortalScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SpinKitFadingCircle(
+                SpinKitWave(
                   color: AppColors.appColor,
                   size: 50.0,
                 ),

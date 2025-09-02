@@ -20,7 +20,7 @@ class _OnlinePaymentsScreenState extends State<OnlinePaymentsScreen> {
     final screenSize = MediaQuery.of(context).size;
 
     // 🔹 Use MediaQuery instead of isTablet
-    final topPadding = screenSize.height * 0.07; // ~7% of height
+    final topPadding = screenSize.height * 0.04; // ~7% of height
     final horizontalPadding = screenSize.width * 0.05; // ~5% of width
     final buttonSize = screenSize.width * 0.20; // 20% of width
     final titleFontSize = screenSize.width * 0.05; // responsive title size
@@ -33,7 +33,7 @@ class _OnlinePaymentsScreenState extends State<OnlinePaymentsScreen> {
       child: Scaffold(
         body: Stack(
           children: [
-            // Background Image with blur
+
             Container(
               decoration: BoxDecoration(
                 image: DecorationImage(
@@ -50,7 +50,7 @@ class _OnlinePaymentsScreenState extends State<OnlinePaymentsScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      SpinKitFadingCircle(
+                      SpinKitWave(
                         color: AppColors.appColor,
                         size: 50.0,
                       ),

@@ -27,6 +27,7 @@ class LoginController extends GetxController {
         await _storage.write(key: "email_no1", value: obj["email_no1"]);
         await _storage.write(key: "mobile_no1", value: obj["mobile_no1"]);
         await _storage.write(key: "OTP", value: obj["OTP"]);
+        await _storage.write(key: "user_password", value: obj["user_password"]);
 
         Get.offAll(() => MainWrapper());
         await companyController.fetchAndStoreCompanyDetails("SHET");

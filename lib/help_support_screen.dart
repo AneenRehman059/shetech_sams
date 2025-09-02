@@ -8,77 +8,105 @@ class HelpSupportScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          Expanded(
-            flex: 3,
-            child: Stack(
-              children: [
-                Opacity(
-                  opacity: 0.3,
-                  child: Image.asset(
-                    'assets/images/help.jpg',
-                    width: double.infinity,
-                    height: double.infinity,
-                    fit: BoxFit.cover,
+      body: _buildPortraitLayout(context),
+    );
+  }
+
+  Widget _buildPortraitLayout(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
+    return Column(
+      children: [
+        SizedBox(height: screenHeight * 0.03),
+        Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: screenWidth * 0.04,
+            vertical: screenHeight * 0.02,
+          ),
+          child: Row(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.arrow_back_ios_new),
+                onPressed: () {
+                  Get.back();
+                },
+              ),
+              const Spacer(),
+              Padding(
+                padding: EdgeInsets.only(top: 5),
+                child: Text(
+                  'Help & Support',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: screenWidth * 0.055,
+                    color: Colors.black,
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: ListView(
+              ),
+              const Spacer(flex: 2),
+            ],
+          ),
+        ),
+
+        Expanded(
+          flex: 3,
+          child: Stack(
+            children: [
+              Opacity(
+                opacity: 0.3,
+                child: Image.asset(
+                  'assets/images/help.jpg',
+                  width: double.infinity,
+                  height: double.infinity,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              SingleChildScrollView(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: screenWidth * 0.04,
+                    vertical: screenHeight * 0.02,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const SizedBox(height: 10),
-                      Row(
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.arrow_back_ios_new),
-                            onPressed: () {
-                              Get.back();
-                            },
-                          ),
-                          const Spacer(),
-                          const Text(
-                            'Help & Support',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20,
-                              color: Colors.black,
-                            ),
-                          ),
-                          const Spacer(flex: 2),
-                        ],
-                      ),
-                      const SizedBox(height: 20),
-                      const Text(
+                      SizedBox(height: screenHeight * 0.01),
+                      Text(
                         'Contact Us',
                         style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
+                            fontSize: screenWidth * 0.05,
+                            fontWeight: FontWeight.bold),
                       ),
-                      const SizedBox(height: 8),
-                      const Text(
+                      SizedBox(height: screenHeight * 0.01),
+                      Text(
                         'Our helpline is always open to receive any inquiry or feedback...',
-                        style: TextStyle(fontSize: 14),
+                        style: TextStyle(fontSize: screenWidth * 0.035),
                       ),
-                      const SizedBox(height: 16),
+                      SizedBox(height: screenHeight * 0.015),
                       _buildContactInfoCard(
+                        context,
                         icon: Icons.phone,
                         title: 'UAN',
                         details: '021-111-111-160\nToll Free: 0800-00100',
                       ),
-                      const SizedBox(height: 12),
+                      SizedBox(height: screenHeight * 0.015),
                       _buildContactInfoCard(
+                        context,
                         icon: Icons.email,
                         title: 'Email',
                         details: 'info@newmetrocity.com.pk',
                       ),
-                      const SizedBox(height: 12),
+                      SizedBox(height: screenHeight * 0.015),
                       _buildContactInfoCard(
+                        context,
                         icon: Icons.location_on,
                         title: 'Address',
                         details: '56-D Broadway Commercial DHA Phase 8 Lahore',
                       ),
-                      const SizedBox(height: 12),
+                      SizedBox(height: screenHeight * 0.015),
                       _buildContactInfoCard(
+                        context,
                         icon: Icons.access_time,
                         title: 'Timing',
                         details: 'Mon-Fri: 10 AM - 7 PM\nSat: 10 AM - 5 PM',
@@ -86,121 +114,133 @@ class HelpSupportScreen extends StatelessWidget {
                     ],
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-          // Bottom Section with Form
-          Expanded(
-            flex: 3,
-            child: Stack(
-              children: [
-                Opacity(
-                  opacity: 0.3,
-                  child: Image.asset(
-                    'assets/images/support.png',
-                    width: double.infinity,
-                    height: double.infinity,
-                    fit: BoxFit.cover,
-                  ),
+        ),
+        // Bottom Section with Form - Scrollable
+        Expanded(
+          flex: 3,
+          child: Stack(
+            children: [
+              Opacity(
+                opacity: 0.3,
+                child: Image.asset(
+                  'assets/images/support.png',
+                  width: double.infinity,
+                  height: double.infinity,
+                  fit: BoxFit.cover,
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: ListView(
-                    children: [
-                      const Text(
-                        'Name',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
-                        ),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: screenWidth * 0.04,
+                ),
+                child: ListView(
+                  children: [
+                    Text(
+                      'Name',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: screenWidth * 0.04,
                       ),
-                      const SizedBox(height: 4),
-                      _buildTextField(hint: "BSM DEVELOPERS"),
-                      const SizedBox(height: 12),
-                      const Text(
-                        'Email',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
-                        ),
+                    ),
+                    SizedBox(height: screenHeight * 0.005),
+                    _buildTextField(context, hint: "BSM DEVELOPERS"),
+                    SizedBox(height: screenHeight * 0.015),
+                    Text(
+                      'Email',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: screenWidth * 0.04,
                       ),
-                      const SizedBox(height: 4),
-                      _buildTextField(hint: "newmetrocity@example.com"),
-                      const SizedBox(height: 12),
-                      const Text(
-                        'Phone',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
-                        ),
+                    ),
+                    SizedBox(height: screenHeight * 0.005),
+                    _buildTextField(context, hint: "newmetrocity@example.com"),
+                    SizedBox(height: screenHeight * 0.015),
+                    Text(
+                      'Phone',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: screenWidth * 0.04,
                       ),
-                      const SizedBox(height: 4),
-                      _buildTextField(hint: "03212345678"),
-                      const SizedBox(height: 12),
-                      const Text(
-                        'Message',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
-                        ),
+                    ),
+                    SizedBox(height: screenHeight * 0.005),
+                    _buildTextField(context, hint: "03212345678"),
+                    SizedBox(height: screenHeight * 0.015),
+                    Text(
+                      'Message',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: screenWidth * 0.04,
                       ),
-                      const SizedBox(height: 4),
-                      _buildTextField(
-                        hint: "Type your message...",
-                        maxLines: 4,
-                      ),
-                      const SizedBox(height: 16),
-                      ElevatedButton(
+                    ),
+                    SizedBox(height: screenHeight * 0.005),
+                    _buildTextField(
+                      context,
+                      hint: "Type your message...",
+                      maxLines: 4,
+                    ),
+                    SizedBox(height: screenHeight * 0.02),
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 10),
+                      child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.appColor,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          padding: EdgeInsets.symmetric(vertical: screenHeight * 0.02),
+                          minimumSize: Size(double.infinity, screenHeight * 0.06),
                         ),
                         onPressed: () {
                           // Handle send
                         },
-                        child: const Text("Send",
-                            style: TextStyle(color: Colors.white)),
+                        child: Text("Send",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: screenWidth * 0.04,
+                            )),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
-  Widget _buildContactInfoCard({
-    required IconData icon,
-    required String title,
-    required String details,
-  }) {
+  Widget _buildContactInfoCard(
+      BuildContext context, {
+        required IconData icon,
+        required String title,
+        required String details,
+      }) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
     return Container(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, color: AppColors.appColor),
-          const SizedBox(width: 12),
+          Icon(icon, color: AppColors.appColor, size: screenWidth * 0.06),
+          SizedBox(width: screenWidth * 0.03),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 14,
+                    fontSize: 18,
                   ),
                 ),
-                const SizedBox(height: 4),
                 Text(
                   details,
-                  style: const TextStyle(fontSize: 13),
+                  style: TextStyle(fontSize: 14),
                 ),
               ],
             ),
@@ -210,15 +250,21 @@ class HelpSupportScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTextField({
-    required String hint,
-    int maxLines = 1,
-  }) {
+  Widget _buildTextField(
+      BuildContext context, {
+        required String hint,
+        int maxLines = 1,
+      }) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
     return TextFormField(
       maxLines: maxLines,
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: const TextStyle(color: Colors.grey),
+        hintStyle: TextStyle(
+          color: Colors.grey,
+          fontSize: screenWidth * 0.035,
+        ),
         filled: true,
         fillColor: Colors.white.withOpacity(0.9),
         border: OutlineInputBorder(
@@ -229,7 +275,12 @@ class HelpSupportScreen extends StatelessWidget {
           borderSide: BorderSide(color: AppColors.appColor),
           borderRadius: BorderRadius.circular(8),
         ),
+        contentPadding: EdgeInsets.symmetric(
+          horizontal: screenWidth * 0.03,
+          vertical: screenWidth * 0.03,
+        ),
       ),
+      style: TextStyle(fontSize: screenWidth * 0.035),
     );
   }
 }

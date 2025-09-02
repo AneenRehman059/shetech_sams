@@ -64,4 +64,8 @@ class AppTextContent {
       "Join us in shaping the future of urban living at New Metro City. "
       "Experience a lifestyle that exceeds expectations, and seize this golden "
       "opportunity to be part of a thriving community.";
+
+  static const String mission =
+      "Investing in New Metro City isn't just an opportunity to own a home it's a path to financial security. With property values on the rise and strategic locations that ensure excellent connectivity, these projects represent a lucrative investment prospect. Whether you're seeking a modern home for your family or looking to diversify your investment portfolio, New Metro City has got you covered."
+      "Join us in shaping the future of urban living at New Metro City. Experience a lifestyle that exceeds expectations, and seize this golden investment opportunity today.";
 }

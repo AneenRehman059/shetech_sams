@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
+import 'package:washmen/change_password_screen.dart';
 import 'package:washmen/controllers/login_controller.dart';
-
+import 'package:washmen/feedback_screen.dart';
 import '../bottom_app_bar/bottom_app_bar.dart';
+import '../customs/app_bar.dart';
+import '../personal_detail_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   final String title;
@@ -15,6 +19,24 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   final loginController = Get.find<LoginController>();
   final Color menuBackgroundColor = const Color(0xFF8A3E59);
+  final storage = const FlutterSecureStorage();
+  String? userName;
+  String? email;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    String? name = await storage.read(key: "user_name");
+    String? mail = await storage.read(key: "email_no1");
+    setState(() {
+      userName = name ?? "Guest User";
+      email = mail ?? "Not available";
+    });
+  }
 
   void _showLogoutDialog() {
     Get.dialog(
@@ -27,18 +49,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Image.asset(
-                'assets/images/logout.png',
-                height: 50,
-                width: 50,
-              ),
+              Image.asset('assets/images/logout.png', height: 50, width: 50),
               const SizedBox(height: 12),
               const Text(
                 "Logout",
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
               const Text(
@@ -97,144 +112,123 @@ class _ProfileScreenState extends State<ProfileScreen> {
       },
       child: Scaffold(
         backgroundColor: Colors.white,
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          elevation: 0,
-          leading: const BackButton(color: Colors.black),
-          centerTitle: true,
-          title: Column(
-            children: const [
-              Text(
-                'Profile',
-                style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 4),
-              Text(
-                'Gwadar Golf City',
-                style: TextStyle(color: Colors.black54, fontSize: 14),
-              ),
-            ],
-          ),
-          actions: [
-            IconButton(
-              onPressed: () {},
-              icon: const Icon(
-                Icons.settings,
-                color: Colors.black,
-                size: 20,
-              ),
-            )
-          ],
-          bottom: const PreferredSize(
-            preferredSize: Size.fromHeight(1.0),
-            child: Divider(
-              color: Color(0xFF8A2B5B),
-              height: 2.0,
-            ),
-          ),
-        ),
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              const SizedBox(height: 20),
-              // Profile Picture and Info
-              Center(
-                child: Column(
-                  children: const [
-                    CircleAvatar(
-                      radius: 40,
-                      backgroundImage: AssetImage('assets/images/logo.png'),
-                    ),
-                    SizedBox(height: 10),
-                    Text(
-                      'Manzoor Ahmad',
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                    ),
-                    Text(
-                      'manzoor.mfs@gmail.com',
-                      style: TextStyle(color: Colors.grey),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 20),
-              Container(
-                width: double.infinity,
-                color: menuBackgroundColor,
+        body: Column(
+          children: [
+            CustomAppBar(title: widget.title, showBackButton: true),
+
+            Expanded(
+              child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    _buildMenuTile(
-                      onTap: () {},
-                      imagePath: 'assets/images/mode.png',
-                      title: 'Dark Mode',
-                      trailing: Transform.scale(
-                        scale: 0.8,
-                        child: Switch(
-                          value: true,
-                          onChanged: (value) {},
-                          activeColor: Colors.white,
-                        ),
+                    SizedBox(height: 20),
+                    Center(
+                      child: Column(
+                        children: [
+                          CircleAvatar(
+                            radius: 40,
+                            backgroundImage:
+                            AssetImage('assets/images/logo.png'),
+                          ),
+                          SizedBox(height: 10),
+                          Text(
+                            userName ?? "Loading...",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 18),
+                          ),
+                          Text(
+                            email ?? "Loading...",
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                        ],
                       ),
                     ),
-                    _buildMenuTile(
-                      onTap: (){},
-                      imagePath: 'assets/images/detail.png',
-                      title: 'Personal Details',
+                     SizedBox(height: 20),
+
+                    Container(
+                      width: double.infinity,
+                      color: menuBackgroundColor,
+                      child: Column(
+                        children: [
+                          _buildMenuTile(
+                            onTap: () {},
+                            imagePath: 'assets/images/mode.png',
+                            title: 'Dark Mode',
+                            trailing: Transform.scale(
+                              scale: 0.8,
+                              child: Switch(
+                                value: true,
+                                onChanged: (value) {},
+                                activeColor: Colors.white,
+                              ),
+                            ),
+                          ),
+                          _buildMenuTile(
+                            onTap: () {
+                              Get.to(EditProfileScreen());
+                            },
+                            imagePath: 'assets/images/detail.png',
+                            title: 'Personal Details',
+                          ),
+                          _buildMenuTile(
+                            onTap: () {},
+                            imagePath: 'assets/images/supp.png',
+                            title: 'Help & Support',
+                          ),
+                          _buildMenuTile(
+                            onTap: () {
+                              Get.to(FeedbackScreen());
+                            },
+                            imagePath: 'assets/images/feedback.png',
+                            title: 'Feedback',
+                          ),
+                          _buildMenuTile(
+                            onTap: () {},
+                            imagePath: 'assets/images/faqs.png',
+                            title: 'FAQs',
+                          ),
+                          _buildMenuTile(
+                            onTap: () {
+                              Get.to(ChangePasswordScreen());
+                            },
+                            imagePath: 'assets/images/password.png',
+                            title: 'Change Password',
+                          ),
+                          _buildMenuTile(
+                            onTap: () {},
+                            imagePath: 'assets/images/biometric.png',
+                            title: 'Enable Biometric Login',
+                          ),
+                        ],
+                      ),
                     ),
-                    _buildMenuTile(
-                      onTap: (){},
-                      imagePath: 'assets/images/supp.png',
-                      title: 'Help & Support',
-                    ),
-                    _buildMenuTile(
-                      onTap: (){},
-                      imagePath: 'assets/images/feedback.png',
-                      title: 'Feedback',
-                    ),
-                    _buildMenuTile(
-                      onTap: (){},
-                      imagePath: 'assets/images/faqs.png',
-                      title: 'FAQs',
-                    ),
-                    _buildMenuTile(
-                      onTap: (){},
-                      imagePath: 'assets/images/password.png',
-                      title: 'Change Password',
-                    ),
-                    _buildMenuTile(
-                      onTap: (){},
-                      imagePath: 'assets/images/biometric.png',
-                      title: 'Enable Biometric Login',
+
+                    SizedBox(height: 20),
+
+                    Container(
+                      width: double.infinity,
+                      color: Colors.white,
+                      child: Column(
+                        children: [
+                          _buildMenuTile(
+                            onTap: _showLogoutDialog,
+                            imagePath: 'assets/images/logout.png',
+                            title: 'Logout',
+                            textColor: Colors.black,
+                          ),
+                          _buildMenuTile(
+                            onTap: () {},
+                            imagePath: 'assets/images/delete.png',
+                            title: 'Delete Account',
+                            textColor: Colors.black,
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(height: 20),
-              Container(
-                width: double.infinity,
-                color: Colors.white,
-                child: Column(
-                  children: [
-                    _buildMenuTile(
-                      onTap: _showLogoutDialog,
-                      imagePath: 'assets/images/logout.png',
-                      title: 'Logout',
-                      textColor: Colors.black,
-                    ),
-                    _buildMenuTile(
-                      onTap: (){},
-                      imagePath: 'assets/images/delete.png',
-                      title: 'Delete Account',
-                      textColor: Colors.black,
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -257,7 +251,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 color: Colors.white,
-                shape: BoxShape.rectangle,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: Colors.grey.shade300, width: 2),
               ),
@@ -268,7 +261,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 fit: BoxFit.contain,
               ),
             ),
-            const SizedBox(width: 16),
+            SizedBox(width: 16),
             Expanded(
               child: Text(
                 title,
@@ -280,7 +273,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
             trailing ??
-                const Icon(Icons.arrow_forward_ios, color: Colors.black, size: 20),
+                Icon(Icons.arrow_forward_ios,
+                    color: Colors.black, size: 20),
           ],
         ),
       ),
